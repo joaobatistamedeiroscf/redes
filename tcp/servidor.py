@@ -1,0 +1,27 @@
+import socket
+
+HOST = '127.0.0.1'
+PORT = 5000
+
+servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+servidor.bind((HOST, PORT))
+
+servidor.listen()
+
+print("Servidor aguardando conexão...")
+
+conexao, endereco = servidor.accept()
+
+print(f"Cliente conectado: {endereco}")
+
+mensagem = conexao.recv(1024).decode()
+
+print("Mensagem recebida:", mensagem)
+
+resposta = f"Servidor recebeu: {mensagem}"
+
+conexao.send(resposta.encode())
+
+conexao.close()
+servidor.close()
