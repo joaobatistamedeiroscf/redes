@@ -1,18 +1,24 @@
-import socket
+from socket import *
 
-HOST = '127.0.0.1'
-PORT = 5000
+serverName = 'localhost'
+serverPort = 12000
 
-cliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# Cria socket TCP
+clientSocket = socket(AF_INET, SOCK_STREAM)
 
-cliente.connect((HOST, PORT))
+# Estabelece conexão com o servidor
+clientSocket.connect((serverName, serverPort))
 
-mensagem = input("Digite uma mensagem: ")
+# Lê mensagem do usuário
+sentence = input("Digite uma mensagem: ")
 
-cliente.send(mensagem.encode())
+# Envia mensagem ao servidor
+clientSocket.send(sentence.encode())
 
-resposta = cliente.recv(1024).decode()
+# Recebe resposta
+modifiedSentence = clientSocket.recv(1024)
 
-print("Resposta do servidor:", resposta)
+print("Resposta do servidor:", modifiedSentence.decode())
 
-cliente.close()
+# Fecha conexão
+clientSocket.close()

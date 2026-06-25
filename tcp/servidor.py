@@ -1,27 +1,35 @@
-import socket
+from socket import *
 
-HOST = '127.0.0.1'
-PORT = 5000
+# Porta do servidor
+serverPort = 12000
 
-servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# Cria socket TCP
+serverSocket = socket(AF_INET, SOCK_STREAM)
 
-servidor.bind((HOST, PORT))
+# Associa o socket à porta
+serverSocket.bind(('', serverPort))
 
-servidor.listen()
+# Coloca o servidor em modo de escuta
+serverSocket.listen(1)
 
-print("Servidor aguardando conexão...")
+print("Servidor pronto para receber conexões...")
 
-conexao, endereco = servidor.accept()
+while True:
+    # Aguarda conexão do cliente
+    connectionSocket, addr = serverSocket.accept()
 
-print(f"Cliente conectado: {endereco}")
+    print(f"Conexão recebida de {addr}")
 
-mensagem = conexao.recv(1024).decode()
+    # Recebe mensagem do cliente
+    sentence = connectionSocket.recv(1024).decode()
 
-print("Mensagem recebida:", mensagem)
+    print("Mensagem recebida:", sentence)
 
-resposta = f"Servidor recebeu: {mensagem}"
+    # Processa a mensagem (converte para maiúsculas)
+    capitalizedSentence = sentence.upper()
 
-conexao.send(resposta.encode())
+    # Envia resposta ao cliente
+    connectionSocket.send(capitalizedSentence.encode())
 
-conexao.close()
-servidor.close()
+    # Fecha conexão
+    connectionSocket.close()
