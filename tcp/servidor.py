@@ -1,35 +1,31 @@
 from socket import *
+import time
+from datetime import datetime
 
-# Porta do servidor
 serverPort = 12000
 
-# Cria socket TCP
 serverSocket = socket(AF_INET, SOCK_STREAM)
-
-# Associa o socket à porta
 serverSocket.bind(('', serverPort))
-
-# Coloca o servidor em modo de escuta
 serverSocket.listen(1)
 
 print("Servidor pronto para receber conexões...")
 
 while True:
-    # Aguarda conexão do cliente
     connectionSocket, addr = serverSocket.accept()
-
     print(f"Conexão recebida de {addr}")
 
-    # Recebe mensagem do cliente
-    sentence = connectionSocket.recv(1024).decode()
+    data = connectionSocket.recv(1024).decode()
+    parts = data.split('|')
+    sentence = parts[0]
+    client_send_time = float(parts[1])
 
     print("Mensagem recebida:", sentence)
 
-    # Processa a mensagem (converte para maiúsculas)
     capitalizedSentence = sentence.upper()
+    server_response_time = time.time()
+    msg_size = len(sentence.encode('utf-8'))
 
-    # Envia resposta ao cliente
-    connectionSocket.send(capitalizedSentence.encode())
-
-    # Fecha conexão
+    # Monta resposta
+    response = f"{capitalizedSentence}|{addr}|{client_send_time}|{server_response_time}|{msg_size}"
+    connectionSocket.send(response.encode())
     connectionSocket.close()
